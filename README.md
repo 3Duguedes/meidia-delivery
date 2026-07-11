@@ -42,4 +42,4 @@ O sistema já está em produção, atendendo um cliente real.
 
 ## 👤 Autor
 
-Desenvolvido por **Eduardo Guedes** ([@3Duguedes](https://github.com/3Duguedes)) — [G-LINK Soluções em Tecnologia](contato@glinksolucoes.com.br)
+Desenvolvido por **Eduardo Guedes** ([@3DVLOG](https://github.com/3Duguedes)) — (contato@glinksolucoes.com.br)
