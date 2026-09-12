@@ -208,11 +208,18 @@
     max-width: 640px;
     margin: 0 auto;
   }
+  footer p { margin: 0 0 12px; }
+  footer .copyright {
+    margin-bottom: 0;
+    font-size: 0.76rem;
+    opacity: 0.8;
+  }
   footer a { color: var(--primary-dark); }
 
   @media (max-width: 480px) {
     .search-wrap { top: -70px; }
     .search-card { flex-direction: column; }
+    .search-card input { flex: 0 0 auto; width: 100%; }
     .search-card .btn { width: 100%; justify-content: center; }
   }
 </style>
@@ -267,9 +274,12 @@
 </section>
 
 <footer>
-  Este site funciona apenas com conteúdo público do Instagram. Baixe somente
-  mídias que você tem permissão de usar e respeite os direitos autorais e a
-  privacidade de terceiros. Não temos qualquer vínculo com o Instagram ou a Meta.
+  <p>
+    Este site funciona apenas com conteúdo público do Instagram. Baixe somente
+    mídias que você tem permissão de usar e respeite os direitos autorais e a
+    privacidade de terceiros. Não temos qualquer vínculo com o Instagram ou a Meta.
+  </p>
+  <p class="copyright">© 2026 G-LINK Soluções. Todos os direitos reservados.</p>
 </footer>
 
 <script>
