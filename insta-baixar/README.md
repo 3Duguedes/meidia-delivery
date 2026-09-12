@@ -7,18 +7,40 @@ cola o link, clica em baixar.
 
 - **`index.html`** — frontend (campo de link + botão colar/baixar + resultados).
 - **`netlify/functions/get-media.js`** — Netlify Function que recebe o link do
-  Instagram, busca a página pública de *embed* do post
-  (`instagram.com/p/<id>/embed/captioned/`) e extrai a(s) URL(s) direta(s) da
-  mídia (foto, vídeo ou carrossel).
+  Instagram e delega a extração da mídia pra uma **API de terceiros no
+  RapidAPI** (ver seção abaixo). Devolve a(s) URL(s) direta(s) da mídia
+  (foto, vídeo ou carrossel).
 - **`netlify/edge-functions/proxy-download.js`** — Edge Function que faz o
   proxy do download (adiciona o header `Content-Disposition: attachment` e o
   `Referer` que o CDN do Instagram exige). É uma *edge function* (Deno, sem o
   limite de payload das functions normais) porque vídeos passam facilmente do
   limite de resposta de uma Netlify Function comum.
 
-Não existe integração oficial do Instagram para isso — o site funciona lendo
-a página pública que o próprio Instagram serve para embeds, então é o mesmo
-princípio usado por sites como Snapinsta, SaveInsta, etc.
+### Por que uma API de terceiros em vez de scraping direto
+
+A primeira versão deste projeto tentava ler diretamente a página pública de
+*embed* do Instagram (o mesmo truque usado por vários sites de download por
+aí). Isso parou de funcionar de forma confiável: o Instagram passou a servir,
+pra requisições sem sessão/cookies de navegador real (como as de um servidor
+Netlify), uma página de erro genérica disfarçada de resposta `200 OK` — em
+vez de bloquear com um erro claro, ele silenciosamente não entrega a mídia.
+Reproduzir o comportamento de um navegador de verdade (sessão logada,
+proxies residenciais, fingerprint completo) é trabalho considerável e entra
+em zona cinzenta dos Termos de Uso do Instagram. Por isso o projeto usa uma
+API paga/gratuita especializada nisso (RapidAPI), que já resolve essa parte.
+
+### Configuração necessária: RAPIDAPI_KEY
+
+A função depende de uma chave da API RapidAPI usada
+(`instagram-downloader-scraper-reels-igtv-posts-stories`, ou outra
+equivalente). Configure no Netlify:
+
+1. No painel do site → **Site configuration → Environment variables**
+2. Adicione uma variável `RAPIDAPI_KEY` com o valor da sua chave do RapidAPI
+3. Redeploy o site (mudança de variável de ambiente exige um novo deploy)
+
+Sem essa variável configurada, a função responde com erro 500 explicando o
+que falta.
 
 ## 🚀 Deploy no Netlify
 
@@ -39,14 +61,11 @@ functions, sem dependências externas.
 
 ## ⚠️ Limitações conhecidas
 
-- Só funciona com **posts, reels e IGTV públicos**. Stories e contas privadas
-  não são suportados.
-- O Instagram muda o HTML da página de embed de tempos em tempos — se o site
-  parar de encontrar a mídia, é bem provável que seja isso, e o parsing em
-  `get-media.js` precisa ser ajustado (a função tenta várias estratégias de
-  extração antes de desistir, mas nenhuma é garantida para sempre).
-- Uso excessivo pode fazer o Instagram bloquear temporariamente o IP dos
-  servidores do Netlify por rate limit.
+- Depende de uma API de terceiros — se ela sair do ar, mudar de preço ou
+  parar de funcionar, o download para até trocar de provedor.
+- Planos gratuitos de API costumam ter limite mensal de requisições; passado
+  esse limite, é preciso assinar um plano pago ou trocar de API.
+- Só funciona com conteúdo **público**. Contas privadas não são suportadas.
 
 ## 🙏 Uso responsável
 
