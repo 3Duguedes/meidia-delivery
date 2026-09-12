@@ -21,6 +21,25 @@ export default async (req) => {
     );
   }
 
+  // Modo de diagnóstico temporário: &raw=1 devolve o HTML cru que o
+  // Instagram retornou, pra inspecionar manualmente no navegador quando o
+  // parser não está achando a mídia.
+  if (searchParams.get("raw") === "1") {
+    const embedUrl = `https://www.instagram.com/${target.type}/${target.shortcode}/embed/captioned/`;
+    const res = await fetch(embedUrl, {
+      headers: {
+        "User-Agent":
+          "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0 Safari/537.36",
+        "Accept-Language": "pt-BR,pt;q=0.9,en;q=0.8",
+      },
+    });
+    const html = await res.text();
+    return new Response(html, {
+      status: 200,
+      headers: { "content-type": "text/plain; charset=utf-8" },
+    });
+  }
+
   try {
     const media = await fetchMedia(target.type, target.shortcode);
     return json({ ok: true, ...media });
