@@ -11,9 +11,9 @@ export default async (req) => {
     return json({ ok: false, error: "Informe um link do Instagram." }, 400);
   }
 
-  let shortcode;
+  let target;
   try {
-    shortcode = extractShortcode(igUrl);
+    target = extractShortcode(igUrl);
   } catch {
     return json(
       { ok: false, error: "Link do Instagram inválido. Use um link de post, reel ou IGTV." },
@@ -22,10 +22,16 @@ export default async (req) => {
   }
 
   try {
-    const media = await fetchMedia(shortcode);
+    const media = await fetchMedia(target.type, target.shortcode);
     return json({ ok: true, ...media });
   } catch (err) {
-    return json({ ok: false, error: err.message || "Não foi possível processar esse link." }, 502);
+    // Status 200 aqui de propósito: "não achei a mídia" é uma resposta válida
+    // da aplicação, não uma falha de infraestrutura — evita ruído de erro
+    // 4xx/5xx no console do navegador para um caso esperado.
+    return json(
+      { ok: false, error: err.message || "Não foi possível processar esse link.", debug: err.debug },
+      200
+    );
   }
 };
 
@@ -44,11 +50,35 @@ function extractShortcode(rawUrl) {
   }
   const match = u.pathname.match(/\/(p|reel|reels|tv)\/([A-Za-z0-9_-]+)/);
   if (!match) throw new Error("no shortcode");
-  return match[2];
+  const type = match[1] === "reels" ? "reel" : match[1]; // normaliza /reels/ -> reel
+  return { type, shortcode: match[2] };
 }
 
-async function fetchMedia(shortcode) {
-  const embedUrl = `https://www.instagram.com/p/${shortcode}/embed/captioned/`;
+// O Instagram serve o HTML de embed de forma um pouco diferente dependendo
+// do tipo do link (post/reel/IGTV) e às vezes até dentro do mesmo tipo entre
+// "/embed/captioned/" e "/embed/". Tenta algumas variações em cascata antes
+// de desistir.
+async function fetchMedia(type, shortcode) {
+  const candidates = [
+    `https://www.instagram.com/${type}/${shortcode}/embed/captioned/`,
+    `https://www.instagram.com/${type}/${shortcode}/embed/`,
+  ];
+  if (type !== "p") {
+    candidates.push(`https://www.instagram.com/p/${shortcode}/embed/captioned/`);
+  }
+
+  let lastError;
+  for (const embedUrl of candidates) {
+    try {
+      return await fetchFromEmbedUrl(embedUrl);
+    } catch (err) {
+      lastError = err;
+    }
+  }
+  throw lastError;
+}
+
+async function fetchFromEmbedUrl(embedUrl) {
   const res = await fetch(embedUrl, {
     headers: {
       "User-Agent":
@@ -58,14 +88,25 @@ async function fetchMedia(shortcode) {
   });
 
   if (res.status === 404) {
-    throw new Error("Post não encontrado. Ele pode ser privado, ter sido removido ou o link está errado.");
+    const err = new Error(
+      "Post não encontrado. Ele pode ser privado, ter sido removido ou o link está errado."
+    );
+    err.debug = { url: embedUrl, status: 404 };
+    throw err;
   }
   if (!res.ok) {
-    throw new Error("O Instagram bloqueou a requisição agora. Tente novamente em instantes.");
+    const err = new Error("O Instagram bloqueou a requisição agora. Tente novamente em instantes.");
+    err.debug = { url: embedUrl, status: res.status };
+    throw err;
   }
 
   const html = await res.text();
-  return parseEmbedHtml(html);
+  try {
+    return parseEmbedHtml(html);
+  } catch (err) {
+    err.debug = { url: embedUrl, status: res.status, htmlSnippet: html.slice(0, 500) };
+    throw err;
+  }
 }
 
 function unescapeUrl(url) {

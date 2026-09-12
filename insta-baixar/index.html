@@ -302,6 +302,7 @@
       const data = await res.json();
 
       if (!res.ok || !data.ok) {
+        if (data.debug) console.warn("InstaBaixar debug:", data.debug);
         throw new Error(data.error || "Não foi possível baixar esse link.");
       }
 
