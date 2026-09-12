@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>InstaBaixar — Baixar vídeos, fotos e reels do Instagram</title>
+<title>BaixaInsta G-LINK — Baixar vídeos, fotos e reels do Instagram</title>
 <meta name="description" content="Baixe vídeos, fotos, reels e IGTV do Instagram de forma rápida e gratuita." />
 <style>
   :root {
@@ -220,7 +220,7 @@
 
 <header>
   <span class="logo-dot"></span>
-  <h1>InstaBaixar</h1>
+  <h1>BaixaInsta G-LINK</h1>
 </header>
 
 <section class="hero">
@@ -302,7 +302,7 @@
       const data = await res.json();
 
       if (!res.ok || !data.ok) {
-        if (data.debug) console.warn("InstaBaixar debug:", data.debug);
+        if (data.debug) console.warn("BaixaInsta G-LINK debug:", data.debug);
         throw new Error(data.error || "Não foi possível baixar esse link.");
       }
 

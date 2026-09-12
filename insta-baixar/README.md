@@ -1,4 +1,4 @@
-# 📥 InstaBaixar
+# 📥 BaixaInsta G-LINK
 
 Site para baixar vídeos, fotos, reels e IGTV do Instagram, no estilo Snapinsta —
 cola o link, clica em baixar.
