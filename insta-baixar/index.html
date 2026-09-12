@@ -1,0 +1,349 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>InstaBaixar — Baixar vídeos, fotos e reels do Instagram</title>
+<meta name="description" content="Baixe vídeos, fotos, reels e IGTV do Instagram de forma rápida e gratuita." />
+<style>
+  :root {
+    --bg: #f7f5fb;
+    --card: #ffffff;
+    --text: #1f1330;
+    --muted: #6b6178;
+    --primary: #8a3ffc;
+    --primary-dark: #6f2fd6;
+    --accent: #ff5c9e;
+    --border: #e7e1f2;
+    --success: #1fb26a;
+    --error: #e0435a;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    background: var(--bg);
+    color: var(--text);
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  }
+  header {
+    padding: 20px 24px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    max-width: 900px;
+    margin: 0 auto;
+  }
+  .logo-dot {
+    width: 12px; height: 12px; border-radius: 50%;
+    background: linear-gradient(135deg, var(--primary), var(--accent));
+  }
+  header h1 { font-size: 1.1rem; margin: 0; font-weight: 700; }
+
+  .hero {
+    background: linear-gradient(135deg, #7b2ff7 0%, #b13ff0 45%, #ff5c9e 100%);
+    padding: 56px 24px 120px;
+    text-align: center;
+    color: white;
+  }
+  .hero h2 {
+    font-size: clamp(1.6rem, 4vw, 2.6rem);
+    margin: 0 0 12px;
+    font-weight: 800;
+  }
+  .hero p {
+    margin: 0 auto 32px;
+    max-width: 560px;
+    opacity: 0.92;
+    font-size: 1rem;
+  }
+
+  .search-wrap {
+    max-width: 720px;
+    margin: 0 auto 24px;
+    padding: 0 24px;
+    position: relative;
+    top: -84px;
+  }
+  .search-card {
+    background: var(--card);
+    border-radius: 18px;
+    padding: 18px;
+    box-shadow: 0 20px 40px rgba(80, 30, 140, 0.18);
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+  }
+  .search-card input {
+    flex: 1 1 220px;
+    border: 1.5px solid var(--border);
+    border-radius: 12px;
+    padding: 14px 16px;
+    font-size: 0.95rem;
+    outline: none;
+    color: var(--text);
+  }
+  .search-card input:focus { border-color: var(--primary); }
+  .btn {
+    border: none;
+    border-radius: 12px;
+    padding: 14px 18px;
+    font-size: 0.95rem;
+    font-weight: 600;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    white-space: nowrap;
+  }
+  .btn-secondary {
+    background: #f1ecfb;
+    color: var(--primary-dark);
+  }
+  .btn-primary {
+    background: linear-gradient(135deg, var(--primary), var(--accent));
+    color: white;
+  }
+  .btn-primary:disabled { opacity: 0.6; cursor: progress; }
+
+  main {
+    max-width: 900px;
+    margin: -60px auto 60px;
+    padding: 0 24px;
+  }
+
+  .status {
+    text-align: center;
+    padding: 16px;
+    border-radius: 12px;
+    margin-bottom: 20px;
+    font-size: 0.95rem;
+  }
+  .status.error { background: #fdeaec; color: var(--error); }
+  .status.loading { background: #f1ecfb; color: var(--primary-dark); }
+
+  .results {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+    gap: 18px;
+  }
+  .result-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+  }
+  .result-card .thumb {
+    width: 100%;
+    aspect-ratio: 1;
+    object-fit: cover;
+    background: #eee;
+    display: block;
+  }
+  .result-card video.thumb { background: black; }
+  .result-card .body {
+    padding: 14px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+  .badge {
+    align-self: flex-start;
+    font-size: 0.72rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    padding: 3px 8px;
+    border-radius: 999px;
+    background: #f1ecfb;
+    color: var(--primary-dark);
+  }
+  .result-card a.download {
+    text-align: center;
+    text-decoration: none;
+    background: linear-gradient(135deg, var(--primary), var(--accent));
+    color: white;
+    padding: 10px;
+    border-radius: 10px;
+    font-weight: 600;
+    font-size: 0.9rem;
+  }
+
+  .how-it-works {
+    max-width: 900px;
+    margin: 40px auto;
+    padding: 0 24px;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 16px;
+  }
+  .step {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 18px;
+  }
+  .step .n {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 28px; height: 28px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, var(--primary), var(--accent));
+    color: white;
+    font-weight: 700;
+    font-size: 0.85rem;
+    margin-bottom: 10px;
+  }
+  .step h3 { margin: 0 0 6px; font-size: 1rem; }
+  .step p { margin: 0; color: var(--muted); font-size: 0.88rem; }
+
+  footer {
+    text-align: center;
+    padding: 32px 24px 48px;
+    color: var(--muted);
+    font-size: 0.82rem;
+    max-width: 640px;
+    margin: 0 auto;
+  }
+  footer a { color: var(--primary-dark); }
+
+  @media (max-width: 480px) {
+    .search-wrap { top: -70px; }
+    .search-card { flex-direction: column; }
+    .search-card .btn { width: 100%; justify-content: center; }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <span class="logo-dot"></span>
+  <h1>InstaBaixar</h1>
+</header>
+
+<section class="hero">
+  <h2>Baixar Vídeo do Instagram</h2>
+  <p>Baixe Vídeos, Fotos, Reels e IGTV do Instagram gratuitamente, direto do navegador.</p>
+</section>
+
+<div class="search-wrap">
+  <form class="search-card" id="form">
+    <input
+      type="url"
+      id="urlInput"
+      placeholder="Cole aqui o link do Instagram (post, reel ou IGTV)"
+      autocomplete="off"
+      required
+    />
+    <button type="button" class="btn btn-secondary" id="pasteBtn">📋 Colar</button>
+    <button type="submit" class="btn btn-primary" id="downloadBtn">⬇️ Baixar</button>
+  </form>
+</div>
+
+<main>
+  <div id="statusBox"></div>
+  <div class="results" id="results"></div>
+</main>
+
+<section class="how-it-works">
+  <div class="step">
+    <div class="n">1</div>
+    <h3>Copie o link</h3>
+    <p>Abra o post, reel ou IGTV no Instagram e copie o link (Compartilhar → Copiar link).</p>
+  </div>
+  <div class="step">
+    <div class="n">2</div>
+    <h3>Cole aqui</h3>
+    <p>Cole o link no campo acima e clique em Baixar.</p>
+  </div>
+  <div class="step">
+    <div class="n">3</div>
+    <h3>Baixe a mídia</h3>
+    <p>Escolha o vídeo, foto ou reel exibido e clique para baixar no seu dispositivo.</p>
+  </div>
+</section>
+
+<footer>
+  Este site funciona apenas com conteúdo público do Instagram. Baixe somente
+  mídias que você tem permissão de usar e respeite os direitos autorais e a
+  privacidade de terceiros. Não temos qualquer vínculo com o Instagram ou a Meta.
+</footer>
+
+<script>
+  const form = document.getElementById("form");
+  const urlInput = document.getElementById("urlInput");
+  const pasteBtn = document.getElementById("pasteBtn");
+  const downloadBtn = document.getElementById("downloadBtn");
+  const statusBox = document.getElementById("statusBox");
+  const resultsBox = document.getElementById("results");
+
+  pasteBtn.addEventListener("click", async () => {
+    try {
+      const text = await navigator.clipboard.readText();
+      if (text) urlInput.value = text.trim();
+    } catch (e) {
+      statusBox.innerHTML = `<div class="status error">Não consegui acessar sua área de transferência. Cole o link manualmente.</div>`;
+    }
+  });
+
+  form.addEventListener("submit", async (e) => {
+    e.preventDefault();
+    const url = urlInput.value.trim();
+    if (!url) return;
+
+    resultsBox.innerHTML = "";
+    statusBox.innerHTML = `<div class="status loading">Buscando a mídia, aguarde…</div>`;
+    downloadBtn.disabled = true;
+
+    try {
+      const res = await fetch(`/.netlify/functions/get-media?url=${encodeURIComponent(url)}`);
+      const data = await res.json();
+
+      if (!res.ok || !data.ok) {
+        throw new Error(data.error || "Não foi possível baixar esse link.");
+      }
+
+      statusBox.innerHTML = "";
+      renderResults(data.items);
+    } catch (err) {
+      statusBox.innerHTML = `<div class="status error">${escapeHtml(err.message)}</div>`;
+    } finally {
+      downloadBtn.disabled = false;
+    }
+  });
+
+  function renderResults(items) {
+    resultsBox.innerHTML = items
+      .map((item, i) => {
+        const ext = item.type === "video" ? "mp4" : "jpg";
+        const filename = `instabaixar-${Date.now()}-${i + 1}.${ext}`;
+        const downloadUrl = `/download?url=${encodeURIComponent(item.url)}&filename=${encodeURIComponent(filename)}`;
+        const media =
+          item.type === "video"
+            ? `<video class="thumb" src="${item.url}" controls preload="metadata"></video>`
+            : `<img class="thumb" src="${item.url}" alt="Mídia do Instagram" loading="lazy" />`;
+
+        return `
+          <div class="result-card">
+            ${media}
+            <div class="body">
+              <span class="badge">${item.type === "video" ? "Vídeo" : "Foto"}</span>
+              <a class="download" href="${downloadUrl}" download>Baixar ${item.type === "video" ? "vídeo" : "foto"}</a>
+            </div>
+          </div>
+        `;
+      })
+      .join("");
+  }
+
+  function escapeHtml(str) {
+    const div = document.createElement("div");
+    div.textContent = str;
+    return div.innerHTML;
+  }
+</script>
+
+</body>
+</html>

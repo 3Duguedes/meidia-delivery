@@ -1,0 +1,9 @@
+{
+  "name": "insta-baixar",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Site para baixar vídeos, fotos e reels do Instagram (estilo Snapinsta).",
+  "engines": {
+    "node": ">=18"
+  }
+}

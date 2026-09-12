@@ -1,0 +1,9 @@
+[build]
+  publish = "."
+
+[functions]
+  directory = "netlify/functions"
+
+[[edge_functions]]
+  path = "/download"
+  function = "proxy-download"
