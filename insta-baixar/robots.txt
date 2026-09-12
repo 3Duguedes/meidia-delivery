@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://baixainsta.glinksolucoes.com.br/sitemap.xml

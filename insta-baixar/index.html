@@ -5,6 +5,28 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <title>BaixaInsta G-LINK — Baixar vídeos, fotos e reels do Instagram</title>
 <meta name="description" content="Baixe vídeos, fotos, reels e IGTV do Instagram de forma rápida e gratuita." />
+
+<!-- SEO / redes sociais -->
+<link rel="canonical" href="https://baixainsta.glinksolucoes.com.br/" />
+<meta property="og:type" content="website" />
+<meta property="og:site_name" content="BaixaInsta G-LINK" />
+<meta property="og:title" content="BaixaInsta G-LINK — Baixar vídeos, fotos e reels do Instagram" />
+<meta property="og:description" content="Baixe vídeos, fotos, reels e IGTV do Instagram de forma rápida e gratuita." />
+<meta property="og:url" content="https://baixainsta.glinksolucoes.com.br/" />
+<meta property="og:image" content="https://baixainsta.glinksolucoes.com.br/assets/icons/icon-512.png" />
+<meta name="twitter:card" content="summary" />
+<meta name="twitter:title" content="BaixaInsta G-LINK — Baixar vídeos, fotos e reels do Instagram" />
+<meta name="twitter:description" content="Baixe vídeos, fotos, reels e IGTV do Instagram de forma rápida e gratuita." />
+<meta name="twitter:image" content="https://baixainsta.glinksolucoes.com.br/assets/icons/icon-512.png" />
+
+<!-- PWA -->
+<link rel="manifest" href="/manifest.json" />
+<meta name="theme-color" content="#0a0e1a" />
+<link rel="apple-touch-icon" href="/assets/icons/apple-touch-icon.png" />
+<meta name="apple-mobile-web-app-capable" content="yes" />
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+<meta name="apple-mobile-web-app-title" content="BaixaInsta" />
+
 <link rel="icon" type="image/svg+xml" href="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxMDAgMTAwIj4KICA8cmVjdCB3aWR0aD0iMTAwIiBoZWlnaHQ9IjEwMCIgcng9IjIyIiBmaWxsPSIjMGEwZTFhIi8+CiAgPHRleHQgeD0iNTAiIHk9IjcwIiBmb250LWZhbWlseT0iQXJpYWwsIEhlbHZldGljYSwgc2Fucy1zZXJpZiIgZm9udC13ZWlnaHQ9IjgwMCIgZm9udC1zaXplPSI2MiIgZmlsbD0iIzRhOTBmYSIgdGV4dC1hbmNob3I9Im1pZGRsZSI+RzwvdGV4dD4KPC9zdmc+Cg==" />
 <style>
   :root {
@@ -354,6 +376,14 @@
     const div = document.createElement("div");
     div.textContent = str;
     return div.innerHTML;
+  }
+
+  if ("serviceWorker" in navigator) {
+    window.addEventListener("load", () => {
+      navigator.serviceWorker.register("/sw.js").catch(() => {
+        // Falha silenciosa: PWA/offline é um extra, não pode quebrar o site.
+      });
+    });
   }
 </script>
 
